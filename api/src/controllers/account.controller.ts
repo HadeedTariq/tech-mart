@@ -101,5 +101,15 @@ const authenticateAccount = async (req: Request, res: Response) => {
   const user = req.body.user;
   return res.status(200).json(user);
 };
+const logoutUser = async (req: Request, res: Response) => {
+  res.clearCookie("accountToken");
+  return res.status(200).json({ message: "User logged out" });
+};
 
-export { createAccount, authenticateAccount, authorizeAccount, verifyAccount };
+export {
+  createAccount,
+  authenticateAccount,
+  authorizeAccount,
+  verifyAccount,
+  logoutUser,
+};

@@ -10,6 +10,7 @@ import {
   authenticateAccount,
   authorizeAccount,
   verifyAccount,
+  logoutUser,
 } from "../controllers/account.controller";
 const router = Router();
 
@@ -18,5 +19,6 @@ router.get("/:role/:name/:email", verifyAccount);
 
 router.post("/authorize", accountLoginChecker, authorizeAccount);
 router.post("/authenticate", authChecker, authenticateAccount);
+router.post("/logout", authChecker, logoutUser);
 
 export { router as accountRouter };
