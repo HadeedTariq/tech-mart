@@ -73,9 +73,9 @@ export default function Register() {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent bg={"black"}>
+      <ModalContent bg={"black"} margin={"auto 0"}>
         <ModalBody>
-          <div className="flex justify-center items-center min-h-[80vh]">
+          <div className="flex justify-center items-center min-h-[60vh]">
             <div className="max-w-md w-full p-8  text-white rounded shadow-md">
               <h2 className="text-2xl font-semibold mb-6">Register</h2>
               <form onSubmit={handleSubmit(registerUser)}>

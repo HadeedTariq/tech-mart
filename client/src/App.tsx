@@ -13,6 +13,7 @@ const App = () => {
     queryFn: async () => {
       const { data } = await accountApi.post("/authenticate");
       dispatch(setUser(data));
+      return null;
     },
   });
   return (
