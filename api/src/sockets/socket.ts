@@ -26,6 +26,7 @@ export const socket = (
     });
     socket.on("sellerRequest", async (request: User & { adminId: string }) => {
       const requester = users.find((u) => u.userId === request.userId);
+      // ^ checking admin is online or not
       const admin = users.find((u) => u.userId === request.adminId);
       const isAlreadyApplied = await AdminNotification.findOne({
         user: requester?.userId,
@@ -37,7 +38,7 @@ export const socket = (
         });
         return;
       }
-      console.log(requester, admin);
+      // console.log(requester, admin);
       if (!admin) {
         await AdminNotification.create({
           user: requester?.userId,

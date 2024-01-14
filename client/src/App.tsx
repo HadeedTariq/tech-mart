@@ -8,6 +8,12 @@ import { setUser } from "./store/reducers/authReducer";
 import { useEffect } from "react";
 import { socket } from "./sockets/socket";
 import { useAuth } from "./store/hooks/storeHooks";
+import AdminHeader from "./components/admin/AdminHeader";
+import AdminProtectedRoute from "./config/AdminProtectedRoute";
+import AdminHome from "./pages/admin/Home.admin";
+import AdminNotifications from "./pages/admin/Notifications.admin";
+import AdminUsers from "./pages/admin/Users.admin";
+import AdminProducts from "./pages/admin/Products.admin";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -25,9 +31,21 @@ const App = () => {
   }, [user?.email]);
   return (
     <Routes>
-      //~user accissble route
+      //^ user accissble route
       <Route path="/" element={<Header />}>
         <Route index element={<Home />} />
+      </Route>
+      <Route
+        path="/admin"
+        element={
+          <AdminProtectedRoute>
+            <AdminHeader />
+          </AdminProtectedRoute>
+        }>
+        <Route index element={<AdminHome />} />
+        <Route path="notifications" element={<AdminNotifications />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="users" element={<AdminUsers />} />
       </Route>
     </Routes>
   );

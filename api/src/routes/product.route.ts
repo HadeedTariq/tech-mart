@@ -21,13 +21,15 @@ router.post(
       productType,
     }: ProductProps = req.body;
     if (
-      !productTitle ||
-      !productDescription ||
-      !productCategory ||
-      !productImage ||
-      !productSeller ||
-      !productPrice ||
-      !productType
+      !(
+        productTitle ||
+        productDescription ||
+        productCategory ||
+        productImage ||
+        productSeller ||
+        productPrice ||
+        productType
+      )
     ) {
       return next({ status: 404, message: "Please fill all the fields" });
     }
@@ -62,6 +64,25 @@ router.delete(
     const deletedProduct = await Product.findOneAndDelete({ _id: id });
     if (deletedProduct) {
       return res.status(203).json({ message: "Product deleted successfully" });
+    } else {
+      return next({});
+    }
+  }
+);
+router.put(
+  "/update",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { productId } = req.query;
+    const product: ProductProps = req.body;
+    if (!productId) {
+      return next({ status: 404, message: "Product id is required" });
+    }
+    const updatedProduct = await Product.findByIdAndUpdate(
+      { _id: productId },
+      { ...product }
+    );
+    if (updatedProduct) {
+      return res.status(200).json({ message: "Product updated successfully" });
     } else {
       return next({});
     }

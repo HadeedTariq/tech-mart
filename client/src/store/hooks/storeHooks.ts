@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { AuthReducerState } from "../reducers/authReducer";
 import { ProductsReducerState } from "../reducers/productsReducer";
+import { AdminReducerState } from "../reducers/adminReducer";
 
 const useAuth = () => {
   const userState: AuthReducerState = useSelector(
@@ -14,5 +15,11 @@ const useProducts = () => {
   );
   return { ...productState };
 };
+const useAdmin = () => {
+  const adminState: AdminReducerState = useSelector(
+    (state: any) => state.adminReducer
+  );
+  return { ...adminState };
+};
 
-export { useAuth, useProducts };
+export { useAuth, useProducts, useAdmin };

@@ -10,6 +10,9 @@ const adminNotificationSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isAccepted: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );
