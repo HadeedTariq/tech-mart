@@ -8,11 +8,13 @@ export type AdminNotifications = {
 export type AdminReducerState = {
   adminPassword: string;
   adminNotifications: AdminNotifications[];
+  allUsers: (Omit<User, "id"> & { _id: string })[];
 };
 
 const initialState: AdminReducerState = {
   adminPassword: "",
   adminNotifications: [],
+  allUsers: [],
 };
 
 const adminReducer = createSlice({
@@ -25,8 +27,12 @@ const adminReducer = createSlice({
     addAdminNotifications: (state, { payload }) => {
       state.adminNotifications = payload;
     },
+    addUsers: (state, { payload }) => {
+      state.allUsers = payload;
+    },
   },
 });
 
-export const { setAdminPassword, addAdminNotifications } = adminReducer.actions;
+export const { setAdminPassword, addAdminNotifications, addUsers } =
+  adminReducer.actions;
 export default adminReducer.reducer;

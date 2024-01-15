@@ -19,15 +19,36 @@ router.get("/notifications", async (req, res, next) => {
   }
 });
 
+router.get("/allUsers", async (req, res, next) => {
+  const allUsers = await Account.find({}).select("-password");
+  if (allUsers) {
+    return res.status(200).json(allUsers);
+  } else {
+    next({});
+  }
+});
+
+router.post("/deleteUsers", async (req, res, next) => {
+  const { users } = req.body;
+  const deleteUsers = await Account.deleteMany({ _id: { $in: users } });
+  await AdminNotification.deleteMany({ user: { $in: users } });
+  if (deleteUsers) {
+    return res.status(200).json({ message: "Users deleted successfully" });
+  } else {
+    next({});
+  }
+});
+
 router.post("/make-user-seller", async (req, res, next) => {
   const { user } = req.body;
-  const seller = await Account.findOneAndUpdate(
-    { _id: user },
+  const seller = await Account.findByIdAndUpdate(
+    user,
     { role: "seller" },
     { new: true }
   );
-  await AdminNotification.findByIdAndUpdate(
-    { user },
+  console.log(user);
+  await AdminNotification.findOneAndUpdate(
+    { user: user },
     { isAccepted: true, isReaded: true }
   );
   if (!seller) {

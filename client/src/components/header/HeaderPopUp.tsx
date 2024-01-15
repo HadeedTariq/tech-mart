@@ -8,6 +8,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FaOpencart, FaRegUserCircle } from "react-icons/fa";
+import { MdAdminPanelSettings } from "react-icons/md";
 import { MdCreateNewFolder } from "react-icons/md";
 import { CiShop } from "react-icons/ci";
 import { IoMdLogOut } from "react-icons/io";
@@ -27,9 +28,11 @@ import {
 import Product from "../Product";
 import { socket } from "../../sockets/socket";
 import { useEffect, useLayoutEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const HeaderPopUp = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
   const { mutate } = useMutation({
@@ -130,6 +133,14 @@ const HeaderPopUp = () => {
                   onClick={becomeSeller}>
                   <CiShop size={25} />
                   Become Seller
+                </p>
+              )}
+              {user.role === "admin" && (
+                <p
+                  className="text-[18px] flex items-center gap-4 font-semibold  font-Nunito hover:text-orange-400 transition-colors duration-300 cursor-pointer"
+                  onClick={() => navigate("/admin")}>
+                  <MdAdminPanelSettings size={25} />
+                  Admin Panel
                 </p>
               )}
               <p

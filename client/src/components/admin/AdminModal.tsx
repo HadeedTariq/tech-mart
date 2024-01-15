@@ -36,7 +36,7 @@ const AdminModal = () => {
           </ModalBody>
           <ModalFooter>
             <button
-              className="bg-purple-400 font-Kanit rounded-md py-1 px-4 text-[18px]"
+              className="bg-purple-600 font-Lato font-bold rounded-md py-1 px-4 text-[18px]"
               onClick={() => {
                 dispatch(setAdminPassword(passwordRef.current?.value));
                 navigate("/admin");

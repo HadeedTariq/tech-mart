@@ -13,12 +13,14 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { useToast } from "@chakra-ui/react";
 
 function AdminNotifications() {
   const { adminPassword, adminNotifications } = useAdmin();
   const dispatch = useDispatch();
+  const toast = useToast();
 
-  const { isLoading } = useQuery({
+  const { isLoading, refetch } = useQuery({
     queryKey: ["notifications"],
     queryFn: async () => {
       const { data: notifications } = await adminApi.get(
@@ -29,6 +31,20 @@ function AdminNotifications() {
     },
   });
   const notifications: Notifications[] = useMemo(() => adminNotifications, []);
+  const makeUserSeller = async (id: string) => {
+    const { data } = await adminApi.post(
+      `/make-user-seller?adminPassword=${adminPassword}`,
+      {
+        user: id,
+      }
+    );
+    toast({
+      title: data.message,
+      isClosable: true,
+      duration: 2000,
+    });
+    refetch();
+  };
   const columns: ColumnDef<Notifications>[] = [
     {
       header: "Name",
@@ -78,19 +94,32 @@ function AdminNotifications() {
             </tr>
           ))}
         </thead>
-        <tbody className="gap-2">
+        <tbody className="gap-2 ">
           {table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              className="hover:bg-slate-600 cursor-pointer transition">
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className="py-2 px-4  text-center font-Fira  text-[18px]">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
+            <>
+              <tr
+                key={row.id}
+                className="hover:bg-slate-600 cursor-pointer transition">
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className="py-2 px-4  text-center font-Fira  text-[18px]">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+              {!row.original.isAccepted && (
+                <div className="flex  relative w- my-2 mx-4">
+                  <button
+                    className="bg-purple-500  rounded-md py-1 px-2 text-[18px] font-Fira"
+                    onClick={() =>
+                      makeUserSeller(String(row.original.user._id))
+                    }>
+                    Accept
+                  </button>
+                </div>
+              )}
+            </>
           ))}
         </tbody>
       </table>
