@@ -4,7 +4,10 @@ import { Product } from "../models/Product.model";
 const router = Router();
 // ~user gets products through this route
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
-  const products = await Product.find({});
+  const products = await Product.find({}).populate({
+    path: "productSeller",
+    select: "-password",
+  });
   if (products) {
     return res.status(200).json(products);
   } else {

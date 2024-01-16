@@ -3,7 +3,7 @@ import { Products } from "../../types/general";
 export type ProductsReducerState = {
   products: Products[];
   cart: Products[];
-  categories: Products["productCategory"][];
+  categories: readonly string[];
 };
 const initialState: ProductsReducerState = {
   products: [],
@@ -22,7 +22,7 @@ const productReducer = createSlice({
       }: {
         payload: {
           products: Products[];
-          categories: Products["productCategory"][];
+          categories: any;
         };
       }
     ) => {

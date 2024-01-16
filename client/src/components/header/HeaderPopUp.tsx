@@ -12,7 +12,7 @@ import { MdAdminPanelSettings } from "react-icons/md";
 import { MdCreateNewFolder } from "react-icons/md";
 import { CiShop } from "react-icons/ci";
 import { IoMdLogOut } from "react-icons/io";
-import { useAuth } from "../../store/hooks/storeHooks";
+import { useAuth, useProducts } from "../../store/hooks/storeHooks";
 import { useDispatch } from "react-redux";
 import { logoutUser, setAuth } from "../../store/reducers/authReducer";
 import { useMutation } from "@tanstack/react-query";
@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 
 const HeaderPopUp = () => {
   const { user } = useAuth();
+  const { cart } = useProducts();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
@@ -72,6 +73,7 @@ const HeaderPopUp = () => {
       }
     });
   }, [socket]);
+
   return (
     <Popover>
       <PopoverTrigger>
@@ -117,7 +119,15 @@ const HeaderPopUp = () => {
 
                     <DrawerBody>
                       <div className="flex flex-col items-center gap-3">
-                        {<Product remove />}
+                        {cart.length > 0 ? (
+                          cart.map((product) => (
+                            <Product remove product={product} />
+                          ))
+                        ) : (
+                          <p className="text-[20px] font-Lato">
+                            Your cart is empty
+                          </p>
+                        )}
                       </div>
                     </DrawerBody>
                   </DrawerContent>

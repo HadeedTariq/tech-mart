@@ -11,7 +11,7 @@ const useAuth = () => {
 };
 const useProducts = () => {
   const productState: ProductsReducerState = useSelector(
-    (state: any) => state.productReducer
+    (state: any) => state.productsReducer
   );
   return { ...productState };
 };

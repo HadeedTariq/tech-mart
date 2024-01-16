@@ -1,37 +1,34 @@
 import { Login, Register } from "../../components";
-import { useAuth } from "../../store/hooks/storeHooks";
+import { useAuth, useProducts } from "../../store/hooks/storeHooks";
 import { useQuery } from "@tanstack/react-query";
 import { productApi } from "../../config/axios";
 import { useDispatch } from "react-redux";
 import { Products } from "../../types/general";
 import { setProductsAndCategories } from "../../store/reducers/productsReducer";
 import Product from "../../components/Product";
+import { categories } from "../../utils/categories";
 
 const Home = () => {
   const { auth } = useAuth();
+  const { products } = useProducts();
   const dispatch = useDispatch();
-  const { isLoading } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const { data }: { data: Products[] } = await productApi.get("/");
-      const categories: Products["productCategory"][] = data.map(
-        (prod) => prod.productCategory
-      );
       dispatch(setProductsAndCategories({ products: data, categories }));
-      return null;
+      return data as Products[];
     },
   });
+  if (isLoading) return <p>Loading...</p>;
   return (
     <>
       {auth === "register" && <Register />}
       {auth === "login" && <Login />}
       <div className="flex items-center justify-center gap-3 p-2 flex-wrap">
-        <Product />
-        <Product />
-        <Product />
-        <Product />
-        <Product />
-        <Product />
+        {products?.map((product) => (
+          <Product product={product} key={product._id} />
+        ))}
       </div>
     </>
   );

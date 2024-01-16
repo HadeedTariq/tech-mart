@@ -16,6 +16,7 @@ import AdminUsers from "./pages/admin/Users.admin";
 import AdminProducts from "./pages/admin/Products.admin";
 import { useToast } from "@chakra-ui/react";
 import CreateProduct from "./pages/seller/CreateProduct";
+import ProductDetails from "./pages/user/ProductDetails";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ const App = () => {
       <Route path="/" element={<Header />}>
         <Route index element={<Home />} />
         <Route path="createProduct" element={<CreateProduct />} />
+        <Route path="details" element={<ProductDetails />} />
       </Route>
       <Route
         path="/admin"
