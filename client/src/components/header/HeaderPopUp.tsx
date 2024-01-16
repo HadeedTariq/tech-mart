@@ -27,7 +27,7 @@ import {
 } from "@chakra-ui/react";
 import Product from "../Product";
 import { socket } from "../../sockets/socket";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const HeaderPopUp = () => {
@@ -60,15 +60,6 @@ const HeaderPopUp = () => {
   };
   useEffect(() => {
     if (!user) return;
-    if (user.id === import.meta.env.VITE_ADMIN_ID) {
-      socket.on("requestNotification", (notification: string) => {
-        toast({
-          title: notification,
-          status: "info",
-          position: "top",
-        });
-      });
-    }
     socket.on("alreadyapplied", (notification: any) => {
       if (notification.id === user.id) {
         toast({
@@ -103,7 +94,12 @@ const HeaderPopUp = () => {
                 {user.username}
               </p>
               {user.role === "seller" && (
-                <p className="text-[18px] flex items-center gap-4 font-semibold  font-Nunito hover:text-orange-400 transition-colors duration-300 cursor-pointer">
+                <p
+                  className="text-[18px] flex items-center gap-4 font-semibold  font-Nunito hover:text-orange-400 transition-colors duration-300 cursor-pointer"
+                  onClick={() => {
+                    onClose();
+                    navigate("createProduct");
+                  }}>
                   <MdCreateNewFolder size={25} />
                   Create Product
                 </p>

@@ -12,5 +12,9 @@ const adminApi = axios.create({
   baseURL: "http://localhost:3500/admin",
   withCredentials: true,
 });
+const sellerApi = axios.create({
+  baseURL: "http://localhost:3500/seller",
+  withCredentials: true,
+});
 
-export { accountApi, productApi, adminApi };
+export { accountApi, productApi, adminApi, sellerApi };

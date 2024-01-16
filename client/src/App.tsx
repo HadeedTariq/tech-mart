@@ -14,9 +14,12 @@ import AdminHome from "./pages/admin/Home.admin";
 import AdminNotifications from "./pages/admin/Notifications.admin";
 import AdminUsers from "./pages/admin/Users.admin";
 import AdminProducts from "./pages/admin/Products.admin";
+import { useToast } from "@chakra-ui/react";
+import CreateProduct from "./pages/seller/CreateProduct";
 
 const App = () => {
   const dispatch = useDispatch();
+  const toast = useToast();
   const { user } = useAuth();
   useQuery({
     queryKey: ["authentication"],
@@ -29,11 +32,24 @@ const App = () => {
   useEffect(() => {
     socket.emit("addUser", { userId: user?.id, role: user?.role });
   }, [user?.email]);
+  useEffect(() => {
+    if (!user) return;
+    if (user.id === import.meta.env.VITE_ADMIN_ID) {
+      socket.on("requestNotification", (notification: string) => {
+        toast({
+          title: notification,
+          status: "info",
+          position: "top",
+        });
+      });
+    }
+  }, [socket]);
   return (
     <Routes>
       //^ user accissble route
       <Route path="/" element={<Header />}>
         <Route index element={<Home />} />
+        <Route path="createProduct" element={<CreateProduct />} />
       </Route>
       <Route
         path="/admin"
