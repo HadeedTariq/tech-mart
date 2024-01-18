@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Account } from "../models/Account.model";
 import { adminChecker } from "../middlewares/admin.middleware";
 import { AdminNotification } from "../models/AdminNotification.model";
+import { Product } from "../models/Product.model";
 
 const router = Router();
 
@@ -55,6 +56,21 @@ router.post("/make-user-seller", async (req, res, next) => {
     return next({ message: "Seller cannot be created" });
   } else {
     return res.status(200).json({ message: "Seller created successfully" });
+  }
+});
+
+router.delete("/deleteProduct", async (req, res, next) => {
+  const { productId: id } = req.query;
+  console.log(req.body);
+
+  if (!id) {
+    return next({ status: 404, message: "Id is required" });
+  }
+  const deleteProduct = await Product.findByIdAndDelete(id);
+  if (deleteProduct) {
+    return res.status(200).json({ message: "Product deleted successfully" });
+  } else {
+    next({});
   }
 });
 

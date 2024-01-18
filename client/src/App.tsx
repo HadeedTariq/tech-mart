@@ -17,6 +17,8 @@ import AdminProducts from "./pages/admin/Products.admin";
 import { useToast } from "@chakra-ui/react";
 import CreateProduct from "./pages/seller/CreateProduct";
 import ProductDetails from "./pages/user/ProductDetails";
+import Chat from "./pages/user/Chat";
+import SingleChat from "./pages/user/SingleChat";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -52,6 +54,8 @@ const App = () => {
         <Route index element={<Home />} />
         <Route path="createProduct" element={<CreateProduct />} />
         <Route path="details" element={<ProductDetails />} />
+        <Route path="chat" element={<Chat />} />
+        <Route path="seller-user-chat" element={<SingleChat />} />
       </Route>
       <Route
         path="/admin"

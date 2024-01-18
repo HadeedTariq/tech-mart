@@ -2,6 +2,7 @@ import { Server as HttpServer, IncomingMessage, ServerResponse } from "http";
 import { Server, Socket } from "socket.io";
 import { AdminNotification } from "../models/AdminNotification.model";
 import { Account } from "../models/Account.model";
+import { Chat } from "../models/Chat.model";
 export const socket = (
   server: HttpServer<typeof IncomingMessage, typeof ServerResponse>
 ) => {
@@ -55,6 +56,34 @@ export const socket = (
           user: requester?.userId,
           isReaded: true,
         });
+      }
+    });
+    // ~ chat functionality
+    socket.on("createChat", async (data: any) => {
+      const { seller, sender } = data;
+      const senderSocket = users.find((user) => user.userId === sender);
+      console.log(senderSocket?.socketId);
+
+      const chats = await Chat.find({
+        user: sender,
+        seller: seller,
+      }).populate({
+        path: "user seller",
+        select: "-password",
+      });
+      if (chats.length <= 0) {
+        await Chat.create({
+          user: sender,
+          seller: seller,
+          messages: [],
+        });
+        io.to(senderSocket?.socketId!).emit(
+          "chatCreated",
+          "Chat created successfully"
+        );
+      } else {
+        console.log(chats);
+        io.to(senderSocket?.socketId!).emit("chats", chats);
       }
     });
   });

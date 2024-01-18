@@ -4,6 +4,16 @@ type User = {
   role: string;
   id: string;
 };
+type Messages = {
+  sender: string;
+  content: string;
+};
+type Chats = {
+  messages: Messages[];
+  _id: string;
+  user: Omit<User, "id"> & { _id: string };
+  seller: Omit<User, "id"> & { _id: string };
+};
 type serverError = {
   response: {
     data: {
@@ -24,4 +34,4 @@ type Products = {
   updatedAt: string;
 };
 
-export { User, serverError, Products };
+export { User, serverError, Products, Chats };
