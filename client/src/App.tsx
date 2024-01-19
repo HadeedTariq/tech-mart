@@ -19,6 +19,7 @@ import CreateProduct from "./pages/seller/CreateProduct";
 import ProductDetails from "./pages/user/ProductDetails";
 import Chat from "./pages/user/Chat";
 import SingleChat from "./pages/user/SingleChat";
+import { addchats } from "./store/reducers/chat.Reducer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -46,6 +47,11 @@ const App = () => {
         });
       });
     }
+  }, [socket]);
+  useEffect(() => {
+    socket.on("messages", (messages) => {
+      dispatch(addchats(messages));
+    });
   }, [socket]);
   return (
     <Routes>

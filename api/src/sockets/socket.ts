@@ -16,8 +16,11 @@ export const socket = (
     cors: {
       origin: "http://localhost:5173",
     },
+    pingTimeout: 60000,
+    pingInterval: 25000,
   });
   io.on("connection", (socket: Socket) => {
+    // ~admin functionality
     socket.on("addUser", (user: User) => {
       if (!user.userId) return;
       const isUserAlreadyExist = users.find((u) => u.userId === user.userId);
@@ -62,8 +65,8 @@ export const socket = (
     socket.on("createChat", async (data: any) => {
       const { seller, sender } = data;
       const senderSocket = users.find((user) => user.userId === sender);
-      console.log(senderSocket?.socketId);
-
+      if (!senderSocket) return;
+      // console.log(senderSocket?.socketId);
       const chats = await Chat.find({
         user: sender,
         seller: seller,
@@ -82,9 +85,37 @@ export const socket = (
           "Chat created successfully"
         );
       } else {
-        console.log(chats);
+        // console.log(chats);
         io.to(senderSocket?.socketId!).emit("chats", chats);
       }
     });
+    // ^ messages handling functionality
+    socket.on(
+      "message",
+      async (msg: { content: string; sender: string; chatId: string }) => {
+        console.log(msg);
+        const { chatId, content, sender } = msg;
+        const messages: any = await Chat.findByIdAndUpdate(
+          chatId,
+          {
+            $push: { messages: { sender, content } },
+          },
+          { new: true }
+        );
+        if (messages) {
+          console.log(messages);
+          const reciever = users.find((user) => user.userId == messages.seller);
+          const chatSender = users.find((user) => user.userId == messages.user);
+          console.log(chatSender, reciever);
+          if (chatSender && reciever) {
+            socket.join(reciever.socketId);
+            socket.join(chatSender.socketId);
+
+            io.to(reciever.socketId).emit("messages", messages);
+            io.to(chatSender.socketId).emit("messages", messages);
+          }
+        }
+      }
+    );
   });
 };
