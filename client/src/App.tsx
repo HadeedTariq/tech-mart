@@ -48,11 +48,6 @@ const App = () => {
       });
     }
   }, [socket]);
-  useEffect(() => {
-    socket.on("messages", (messages) => {
-      dispatch(addchats(messages));
-    });
-  }, [socket]);
   return (
     <Routes>
       //^ user accissble route

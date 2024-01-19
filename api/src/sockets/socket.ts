@@ -64,6 +64,7 @@ export const socket = (
     // ~ chat functionality
     socket.on("createChat", async (data: any) => {
       const { seller, sender } = data;
+      if (sender === seller) return;
       const senderSocket = users.find((user) => user.userId === sender);
       if (!senderSocket) return;
       // console.log(senderSocket?.socketId);
@@ -75,15 +76,15 @@ export const socket = (
         select: "-password",
       });
       if (chats.length <= 0) {
-        await Chat.create({
+        const chat = await Chat.create({
           user: sender,
           seller: seller,
           messages: [],
         });
-        io.to(senderSocket?.socketId!).emit(
-          "chatCreated",
-          "Chat created successfully"
-        );
+        io.to(senderSocket?.socketId!).emit("chatCreated", {
+          msg: "Chat created successfully",
+          chat: [chat],
+        });
       } else {
         // console.log(chats);
         io.to(senderSocket?.socketId!).emit("chats", chats);
@@ -93,7 +94,7 @@ export const socket = (
     socket.on(
       "message",
       async (msg: { content: string; sender: string; chatId: string }) => {
-        console.log(msg);
+        // console.log(msg);
         const { chatId, content, sender } = msg;
         const messages: any = await Chat.findByIdAndUpdate(
           chatId,
@@ -101,18 +102,29 @@ export const socket = (
             $push: { messages: { sender, content } },
           },
           { new: true }
-        );
+        ).populate({
+          path: "user seller",
+          select: "-password",
+        });
+        // console.log(messages);
         if (messages) {
-          console.log(messages);
-          const reciever = users.find((user) => user.userId == messages.seller);
-          const chatSender = users.find((user) => user.userId == messages.user);
+          const reciever = users.find(
+            (user) => user.userId == messages.seller._id
+          );
+          const chatSender = users.find(
+            (user) => user.userId == messages.user._id
+          );
           console.log(chatSender, reciever);
-          if (chatSender && reciever) {
-            socket.join(reciever.socketId);
-            socket.join(chatSender.socketId);
-
-            io.to(reciever.socketId).emit("messages", messages);
-            io.to(chatSender.socketId).emit("messages", messages);
+          if (chatSender || reciever) {
+            // console.log(messages);
+            if (reciever) {
+              socket.join(reciever.socketId);
+              io.to(reciever.socketId).emit("messages", [messages]);
+            }
+            if (chatSender) {
+              socket.join(chatSender.socketId);
+              io.to(chatSender.socketId).emit("messages", [messages]);
+            }
           }
         }
       }

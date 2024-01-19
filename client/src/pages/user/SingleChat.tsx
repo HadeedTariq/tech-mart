@@ -1,5 +1,5 @@
 import { Navigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../store/hooks/storeHooks";
+import { useAuth, useChats } from "../../store/hooks/storeHooks";
 import { useEffect, useRef, useState } from "react";
 import { socket } from "../../sockets/socket";
 import { useToast } from "@chakra-ui/react";
@@ -7,17 +7,20 @@ import { useQuery } from "@tanstack/react-query";
 import { Chats } from "../../types/general";
 import { BsThreeDots } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { addchats } from "../../store/reducers/chat.Reducer";
 
 export default function SingleChat() {
   const toast = useToast();
   const { user } = useAuth();
+  const { chats } = useChats();
+  const dispatch = useDispatch();
   const messageRef = useRef<HTMLInputElement>(null);
   if (!user) return <Navigate to={"/"} />;
 
   const search = useSearchParams();
   const sender = search[0].get("userId");
   const seller = search[0].get("sellerId");
-  const [chats, setChats] = useState<Chats[]>([]);
   const [sellerProps, setSellerProps] = useState<Chats["seller"] | undefined>();
   if (sender === seller || !(seller || sender)) return <Navigate to={"/"} />;
   useQuery({
@@ -38,7 +41,7 @@ export default function SingleChat() {
     }
     socket.emit("message", {
       content: messageRef.current?.value,
-      sender: sellerProps?._id,
+      sender: user.id,
       chatId: chats[0]._id,
     });
     if (messageRef.current) {
@@ -46,18 +49,27 @@ export default function SingleChat() {
     }
   };
   useEffect(() => {
-    socket.on("chatCreated", (message: string) => {
-      toast({
-        title: message,
-        status: "success",
-        isClosable: true,
-      });
-    });
+    socket.on(
+      "chatCreated",
+      ({ msg, chat }: { msg: string; chat: Chats[] }) => {
+        dispatch(addchats(chat));
+        toast({
+          title: msg,
+          status: "success",
+          isClosable: true,
+        });
+      }
+    );
   }, [socket]);
   useEffect(() => {
     socket.on("chats", (chats: Chats[]) => {
       setSellerProps(chats[0].seller);
-      setChats(chats);
+      dispatch(addchats(chats));
+    });
+  }, [socket]);
+  useEffect(() => {
+    socket.on("messages", (messages) => {
+      dispatch(addchats(messages));
     });
   }, [socket]);
   return (
@@ -71,8 +83,19 @@ export default function SingleChat() {
         </div>
         <BsThreeDots size={25} cursor="pointer" />
       </div>
-      <div className="flex flex-col  h-[78vh] overflow-y-scroll hide-scrollbar">
-        <h1 className="text-4xl">messages</h1>
+      <div className="flex flex-col overflow-y-scroll px-4 py-2  h-[78vh]  hide-scrollbar">
+        {chats.length > 0 &&
+          chats[0].messages.map((message, index) => (
+            <div
+              key={index}
+              className={`relative rounded-e-md mb-4 p-2 w-[250px] h-fit ${
+                message.sender === user.id
+                  ? "ml-auto bg-blue-500 text-white font-Fira"
+                  : "mr-auto bg-green-600 text-white font-JetBrains"
+              }`}>
+              {message.content}
+            </div>
+          ))}
       </div>
       <div className="fixed bottom-[4px] border-2 w-full p-[6px] rounded-md flex items-center justify-between">
         <input

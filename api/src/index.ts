@@ -10,6 +10,7 @@ import { productRouter } from "./routes/product.route";
 import { adminRouter } from "./routes/admin.route";
 import { socket } from "./sockets/socket";
 import { sellerRouter } from "./routes/seller.route";
+import { chatRouter } from "./routes/chat.route";
 
 connectToDb(ENV.MONGO_URI);
 const PORT = ENV.PORT || 3500;
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/account", accountRouter);
 app.use("/product", productRouter);
 app.use("/seller", sellerRouter);
+app.use("/chats", chatRouter);
 app.use("/admin", adminRouter);
 // ~
 app.get("/", (req, res) => {

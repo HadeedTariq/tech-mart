@@ -25,7 +25,7 @@ const useAdmin = () => {
 
 const useChats = () => {
   const chatState: ChatReducerState = useSelector(
-    (state: any) => state.adminReducer
+    (state: any) => state.chatReducer
   );
   return { ...chatState };
 };
