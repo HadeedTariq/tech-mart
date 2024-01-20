@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { FaOpencart, FaRegUserCircle } from "react-icons/fa";
 import { MdAdminPanelSettings } from "react-icons/md";
+import { RiAdminFill } from "react-icons/ri";
 import { MdCreateNewFolder } from "react-icons/md";
 import { CiShop } from "react-icons/ci";
 import { IoMdLogOut } from "react-icons/io";
@@ -99,11 +100,10 @@ const HeaderPopUp = () => {
                 <p
                   className="text-[18px] flex items-center gap-4 font-semibold  font-Nunito hover:text-orange-400 transition-colors duration-300 cursor-pointer"
                   onClick={() => {
-                    onClose();
-                    navigate("createProduct");
+                    navigate("seller");
                   }}>
-                  <MdCreateNewFolder size={25} />
-                  Create Product
+                  <RiAdminFill size={25} />
+                  Seller Panel
                 </p>
               )}
               <p

@@ -4,9 +4,25 @@ import { Account } from "../types/auth";
 import { NextFunction, Request, Response, Router } from "express";
 import { isSeller } from "../utils/isSeller";
 import { Product } from "../models/Product.model";
+import { Chat } from "../models/Chat.model";
 
 const router = Router();
 router.use(authChecker);
+
+router.get("/", async (req, res, next) => {
+  const account: Account = req.body.user;
+  const { seller } = req.query;
+  if (!seller) {
+    return next({ status: 404, message: "Seller is required" });
+  }
+  isSeller(account, seller as string, next);
+  const products = await Product.find({ productSeller: seller });
+  if (products) {
+    return res.status(200).json(products);
+  } else {
+    next({});
+  }
+});
 router.post(
   "/create",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -87,5 +103,23 @@ router.put(
     }
   }
 );
+
+router.get("/chats", async (req, res, next) => {
+  const account = req.body.user;
+  const { seller } = req.query;
+  if (!seller) {
+    return next({ status: 404, message: "Seller is required" });
+  }
+  isSeller(account, seller as string, next);
+  const chats = await Chat.find({ seller }).populate({
+    path: "user",
+    select: "-password",
+  });
+  if (chats) {
+    return res.status(200).json(chats);
+  } else {
+    next({});
+  }
+});
 
 export { router as sellerRouter };

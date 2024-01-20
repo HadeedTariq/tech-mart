@@ -19,7 +19,10 @@ import CreateProduct from "./pages/seller/CreateProduct";
 import ProductDetails from "./pages/user/ProductDetails";
 import Chat from "./pages/user/Chat";
 import SingleChat from "./pages/user/SingleChat";
-import { addchats } from "./store/reducers/chat.Reducer";
+import SellerChats from "./pages/seller/SellerChats";
+import SellerHeader from "./components/seller/SellerHeader";
+import SellerHome from "./pages/seller/SellerHome";
+import SellerProducts from "./pages/seller/SellerProducts";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -57,6 +60,12 @@ const App = () => {
         <Route path="details" element={<ProductDetails />} />
         <Route path="chat" element={<Chat />} />
         <Route path="seller-user-chat" element={<SingleChat />} />
+      </Route>
+      <Route path="/seller" element={<SellerHeader />}>
+        <Route index element={<SellerHome />} />
+        <Route path="chats" element={<SellerChats />} />
+        <Route path="createProducts" element={<CreateProduct />} />
+        <Route path="myProducts" element={<SellerProducts />} />
       </Route>
       <Route
         path="/admin"

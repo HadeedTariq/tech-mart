@@ -3,6 +3,7 @@ import { AuthReducerState } from "../reducers/authReducer";
 import { ProductsReducerState } from "../reducers/productsReducer";
 import { AdminReducerState } from "../reducers/adminReducer";
 import { ChatReducerState } from "../reducers/chat.Reducer";
+import { SellerReducerState } from "../reducers/seller.Reducer";
 
 const useAuth = () => {
   const userState: AuthReducerState = useSelector(
@@ -29,5 +30,11 @@ const useChats = () => {
   );
   return { ...chatState };
 };
+const useSeller = () => {
+  const sellerState: SellerReducerState = useSelector(
+    (state: any) => state.sellerReducer
+  );
+  return { ...sellerState };
+};
 
-export { useAuth, useProducts, useAdmin, useChats };
+export { useAuth, useProducts, useAdmin, useChats, useSeller };
